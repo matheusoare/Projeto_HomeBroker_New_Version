@@ -36,4 +36,8 @@ public abstract class Entidade implements Comparable<Entidade>, Serializable {
     public int hashCode() {
         return Integer.hashCode(this.id);
     }
+
+    public abstract String[] getNomesCampos();
+    public abstract Object[] getValoresCampos();
+    public abstract void setCampos(String[] valores) throws IllegalArgumentException;
 }

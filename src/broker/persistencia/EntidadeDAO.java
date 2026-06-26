@@ -59,7 +59,7 @@ public class EntidadeDAO<E extends Entidade> {
     @SuppressWarnings("unchecked")
     public E[] carregarTodos() throws PersistenceException {
         if (entidades.isEmpty()) {
-            throw new PersistenceException("CarregarTodos", "Nenhuma entidade encontrada", null);
+            return (E[]) new Entidade[0];
         }
 
         List<E> ordenadas = new ArrayList<>(entidades);
