@@ -1,3 +1,5 @@
+package broker.persistencia;
+
 public class PersistenceException extends Exception {
 
     //a ideia aqui é ter uma classe de exceção que salva o que está acontecendo, além de informar diretamente via terminal
