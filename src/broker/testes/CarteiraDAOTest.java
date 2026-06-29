@@ -61,6 +61,11 @@ class CarteiraDAOTest {
     }
 
     @Test
+    void carregarTodosVazio() throws PersistenceException {
+        assertEquals(0, dao.carregarTodos().length);
+    }
+
+    @Test
     void carregarComIdNaoExistente() {
         assertThrows(PersistenceException.class, () -> dao.carregar(99));
     }
