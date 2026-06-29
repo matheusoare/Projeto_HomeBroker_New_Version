@@ -112,7 +112,7 @@ Se não tiver Java instalado, baixe em: https://www.java.com/pt_BR/download/
  ---
 
 ## 📁 Estrutura do Projeto
-
+```
 Projeto_HomeBroker_New_Version/
 ├── src/
 │   └── broker/
@@ -167,7 +167,7 @@ Projeto_HomeBroker_New_Version/
 ├── executar.ps1                       (Script Windows)
 ├── executar.sh                        (Script Linux/Mac)
 └── README.md
-
+```
 
 ## 🖥️ Como Usar o Programa
 
