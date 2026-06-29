@@ -41,9 +41,18 @@ class OrdemDAOTest {
 
     @Test
     void atualizarComIdExistente() throws PersistenceException {
-        dao.salvar(new Ordem(1));
-        dao.atualizar(new Ordem(1));
-        assertNotNull(dao.carregar(1));
+        Ordem original = new Ordem(1);
+        original.setCampos(new String[]{"1", "1", "COMPRA", "10", "50.0"});
+        dao.salvar(original);
+
+        Ordem atualizada = new Ordem(1);
+        atualizada.setCampos(new String[]{"2", "2", "VENDA", "20", "100.0"});
+        dao.atualizar(atualizada);
+
+        Ordem recuperada = dao.carregar(1);
+        assertEquals("VENDA", recuperada.getTipo());
+        assertEquals(20, recuperada.getQuantidade());
+        assertEquals(100.0, recuperada.getPrecoLimite());
     }
 
     @Test

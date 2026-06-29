@@ -41,9 +41,16 @@ class CarteiraDAOTest {
 
     @Test
     void atualizarComIdExistente() throws PersistenceException {
-        dao.salvar(new Carteira(1));
-        dao.atualizar(new Carteira(1));
-        assertNotNull(dao.carregar(1));
+        Carteira original = new Carteira(1);
+        original.setCampos(new String[]{"1", "1", "10"});
+        dao.salvar(original);
+
+        Carteira atualizada = new Carteira(1);
+        atualizada.setCampos(new String[]{"1", "1", "20"});
+        dao.atualizar(atualizada);
+
+        Carteira recuperada = dao.carregar(1);
+        assertEquals(20, recuperada.getQuantidade());
     }
 
     @Test

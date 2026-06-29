@@ -41,9 +41,17 @@ class ContaDAOTest {
 
     @Test
     void atualizarComIdExistente() throws PersistenceException {
-        dao.salvar(new Conta(1));
-        dao.atualizar(new Conta(1));
-        assertNotNull(dao.carregar(1));
+        Conta original = new Conta(1);
+        original.setCampos(new String[]{"10", "100.0"});
+        dao.salvar(original);
+
+        Conta atualizada = new Conta(1);
+        atualizada.setCampos(new String[]{"20", "200.0"});
+        dao.atualizar(atualizada);
+
+        Conta recuperada = dao.carregar(1);
+        assertEquals(20, recuperada.getIdCliente());
+        assertEquals(200.0, recuperada.getSaldo());
     }
 
     @Test
