@@ -14,13 +14,11 @@ import java.util.Set;
 public class JanelaConta extends JFrame {
 
     private final EntidadeDAO<Conta>     daoContas;
-    private final EntidadeDAO<Ativo>     daoAtivos;
     private final EntidadeDAO<Ordem>     daoOrdens;
     private final EntidadeDAO<Historico> daoHistorico;
     private final EntidadeDAO<Carteira>  daoCarteira;
 
     private final DefaultTableModel modeloContas    = modelo("ID", "ID Cliente", "Saldo");
-    private final DefaultTableModel modeloAtivos    = modelo("ID", "Código", "Nome", "Valor");
     private final DefaultTableModel modeloOrdens    = modelo("ID", "ID Conta", "ID Ativo", "Tipo", "Qtd", "Preço Limite");
     private final DefaultTableModel modeloHistorico = modelo("ID", "ID Ordem", "Data", "Status");
     private final DefaultTableModel modeloCarteira  = modelo("ID", "ID Cliente", "ID Ativo", "Quantidade");
@@ -36,19 +34,16 @@ public class JanelaConta extends JFrame {
 
         DAOfactory f = DAOfactory.getInstancia();
         daoContas    = f.getDAO(Conta.class);
-        daoAtivos    = f.getDAO(Ativo.class);
         daoOrdens    = f.getDAO(Ordem.class);
         daoHistorico = f.getDAO(Historico.class);
         daoCarteira  = f.getDAO(Carteira.class);
 
         daoContas.recuperar();
-        daoAtivos.recuperar();
         daoOrdens.recuperar();
         daoHistorico.recuperar();
         daoCarteira.recuperar();
 
         JTabbedPane abas = new JTabbedPane();
-        abas.addTab("Ativos",    new JScrollPane(tabela(modeloAtivos)));
         abas.addTab("Ordens",    new JScrollPane(tabela(modeloOrdens)));
         abas.addTab("Histórico", new JScrollPane(tabela(modeloHistorico)));
         abas.addTab("Carteira",  new JScrollPane(tabela(modeloCarteira)));
@@ -70,7 +65,6 @@ public class JanelaConta extends JFrame {
         });
 
         carregarContas();
-        carregarAtivos();
     }
 
     private JPanel painelContas() {
@@ -100,14 +94,6 @@ public class JanelaConta extends JFrame {
         try {
             for (Conta c : daoContas.carregarTodos())
                 modeloContas.addRow(new Object[]{c.getId(), c.getIdCliente(), c.getSaldo()});
-        } catch (PersistenceException ignored) {}
-    }
-
-    private void carregarAtivos() {
-        modeloAtivos.setRowCount(0);
-        try {
-            for (Ativo a : daoAtivos.carregarTodos())
-                modeloAtivos.addRow(new Object[]{a.getId(), a.getCodigo(), a.getNome(), a.getValor()});
         } catch (PersistenceException ignored) {}
     }
 
