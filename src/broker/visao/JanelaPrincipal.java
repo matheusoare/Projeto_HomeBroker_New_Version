@@ -22,7 +22,9 @@ public class JanelaPrincipal extends JFrame {
         painelBotoes.setBorder(BorderFactory.createEmptyBorder(20, 40, 40, 40));
 
         addBotao(painelBotoes, "Clientes", Cliente.class);
-        addBotao(painelBotoes, "Contas", Conta.class);
+        JButton btnContas = new JButton("Contas");
+        btnContas.addActionListener(e -> new JanelaConta().setVisible(true));
+        painelBotoes.add(btnContas);
         addBotao(painelBotoes, "Ativos", Ativo.class);
         addBotao(painelBotoes, "Ordens", Ordem.class);
         addBotao(painelBotoes, "Históricos", Historico.class);

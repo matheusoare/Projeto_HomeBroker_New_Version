@@ -24,8 +24,12 @@ public class Cliente extends Entidade {
     @Override
     public void setCampos(String[] valores) throws IllegalArgumentException {
         if (valores.length < 2) throw new IllegalArgumentException("Informe Nome e CPF");
-        this.nome = valores[0].trim();
-        this.cpf = valores[1].trim();
+        String nomeVal = valores[0].trim();
+        if (nomeVal.isEmpty()) throw new IllegalArgumentException("Nome não pode ser vazio");
+        String cpfVal = valores[1].trim().replaceAll("[.\\-]", "");
+        if (!cpfVal.matches("\\d{11}")) throw new IllegalArgumentException("CPF inválido: informe 11 dígitos numéricos");
+        this.nome = nomeVal;
+        this.cpf = cpfVal;
     }
 
     public String getNome() { return nome; }
