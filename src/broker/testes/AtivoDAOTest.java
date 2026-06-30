@@ -42,16 +42,17 @@ class AtivoDAOTest {
     @Test
     void atualizarComIdExistente() throws PersistenceException {
         Ativo original = new Ativo(1);
-        original.setCampos(new String[]{"PETR4", "Petrobras"});
+        original.setCampos(new String[]{"PETR4", "Petrobras", "30.0"});
         dao.salvar(original);
 
         Ativo atualizado = new Ativo(1);
-        atualizado.setCampos(new String[]{"VALE3", "Vale"});
+        atualizado.setCampos(new String[]{"VALE3", "Vale", "50.0"});
         dao.atualizar(atualizado);
 
         Ativo recuperado = dao.carregar(1);
         assertEquals("VALE3", recuperado.getCodigo());
         assertEquals("Vale", recuperado.getNome());
+        assertEquals(50.0, recuperado.getValor());
     }
 
     @Test
