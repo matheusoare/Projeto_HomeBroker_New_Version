@@ -18,7 +18,7 @@ public class JanelaPrincipal extends JFrame {
         titulo.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
         add(titulo, BorderLayout.NORTH);
 
-        JPanel painelBotoes = new JPanel(new GridLayout(3, 2, 15, 15));
+        JPanel painelBotoes = new JPanel(new GridLayout(1, 3, 15, 15));
         painelBotoes.setBorder(BorderFactory.createEmptyBorder(20, 40, 40, 40));
 
         addBotao(painelBotoes, "Clientes", Cliente.class);
@@ -26,9 +26,6 @@ public class JanelaPrincipal extends JFrame {
         btnContas.addActionListener(e -> new JanelaConta().setVisible(true));
         painelBotoes.add(btnContas);
         addBotao(painelBotoes, "Ativos", Ativo.class);
-        addBotao(painelBotoes, "Ordens", Ordem.class);
-        addBotao(painelBotoes, "Históricos", Historico.class);
-        addBotao(painelBotoes, "Carteiras", Carteira.class);
 
         add(painelBotoes, BorderLayout.CENTER);
     }
