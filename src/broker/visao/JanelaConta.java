@@ -14,6 +14,8 @@ import java.util.Set;
 public class JanelaConta extends JFrame {
 
     private final EntidadeDAO<Conta>     daoContas;
+    private final EntidadeDAO<Cliente>   daoClientes;
+    private final EntidadeDAO<Ativo>     daoAtivos;
     private final EntidadeDAO<Ordem>     daoOrdens;
     private final EntidadeDAO<Historico> daoHistorico;
     private final EntidadeDAO<Carteira>  daoCarteira;
@@ -34,22 +36,25 @@ public class JanelaConta extends JFrame {
 
         DAOfactory f = DAOfactory.getInstancia();
         daoContas    = f.getDAO(Conta.class);
+        daoClientes  = f.getDAO(Cliente.class);
+        daoAtivos    = f.getDAO(Ativo.class);
         daoOrdens    = f.getDAO(Ordem.class);
         daoHistorico = f.getDAO(Historico.class);
         daoCarteira  = f.getDAO(Carteira.class);
 
         daoContas.recuperar();
+        daoClientes.recuperar();
+        daoAtivos.recuperar();
         daoOrdens.recuperar();
         daoHistorico.recuperar();
         daoCarteira.recuperar();
 
         JTabbedPane abas = new JTabbedPane();
-        abas.addTab("Ordens",    new JScrollPane(tabela(modeloOrdens)));
+        abas.addTab("Ordens",    painelOrdens());
         abas.addTab("Histórico", new JScrollPane(tabela(modeloHistorico)));
         abas.addTab("Carteira",  new JScrollPane(tabela(modeloCarteira)));
 
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-                painelContas(), abas);
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelContas(), abas);
         split.setDividerLocation(340);
         add(split);
 
@@ -92,6 +97,17 @@ public class JanelaConta extends JFrame {
         return painel;
     }
 
+    private JPanel painelOrdens() {
+        JPanel painel = new JPanel(new BorderLayout(4, 4));
+        painel.add(new JScrollPane(tabela(modeloOrdens)), BorderLayout.CENTER);
+        JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton btnNovaOrdem = new JButton("Nova Ordem");
+        btnNovaOrdem.addActionListener(e -> novaOrdem());
+        barra.add(btnNovaOrdem);
+        painel.add(barra, BorderLayout.SOUTH);
+        return painel;
+    }
+
     private void carregarContas() {
         modeloContas.setRowCount(0);
         try {
@@ -109,7 +125,6 @@ public class JanelaConta extends JFrame {
         try { conta = daoContas.carregar(id); }
         catch (PersistenceException e) { return; }
 
-        // Ordens desta conta
         modeloOrdens.setRowCount(0);
         Set<Integer> idsOrdens = new HashSet<>();
         try {
@@ -124,22 +139,18 @@ public class JanelaConta extends JFrame {
             }
         } catch (PersistenceException ignored) {}
 
-        // Histórico das ordens desta conta
         modeloHistorico.setRowCount(0);
         try {
-            for (Historico h : daoHistorico.carregarTodos()) {
+            for (Historico h : daoHistorico.carregarTodos())
                 if (idsOrdens.contains(h.getIdOrdem()))
                     modeloHistorico.addRow(new Object[]{h.getId(), h.getIdOrdem(), h.getData(), h.getStatus()});
-            }
         } catch (PersistenceException ignored) {}
 
-        // Carteira do cliente desta conta
         modeloCarteira.setRowCount(0);
         try {
-            for (Carteira c : daoCarteira.carregarTodos()) {
+            for (Carteira c : daoCarteira.carregarTodos())
                 if (c.getIdCliente() == conta.getIdCliente())
                     modeloCarteira.addRow(new Object[]{c.getId(), c.getIdCliente(), c.getIdAtivo(), c.getQuantidade()});
-            }
         } catch (PersistenceException ignored) {}
     }
 
@@ -162,23 +173,25 @@ public class JanelaConta extends JFrame {
     }
 
     private void novaConta() {
+        JTextField fId        = new JTextField(10);
         JTextField fIdCliente = new JTextField(10);
         JTextField fSaldo     = new JTextField(10);
-        JTextField fId        = new JTextField(10);
         JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
-        panel.add(new JLabel("ID:")); panel.add(fId);
+        panel.add(new JLabel("ID:"));         panel.add(fId);
         panel.add(new JLabel("ID Cliente:")); panel.add(fIdCliente);
-        panel.add(new JLabel("Saldo:"));     panel.add(fSaldo);
+        panel.add(new JLabel("Saldo:"));      panel.add(fSaldo);
         if (JOptionPane.showConfirmDialog(this, panel, "Nova Conta", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
         try {
-            int id = Integer.parseInt(fId.getText().trim());
+            int id        = Integer.parseInt(fId.getText().trim());
+            int idCliente = Integer.parseInt(fIdCliente.getText().trim());
+            validarCliente(idCliente);
             Conta c = new Conta(id);
             c.setCampos(new String[]{fIdCliente.getText(), fSaldo.getText()});
             daoContas.salvar(c);
             try { daoContas.persistir(); } catch (PersistenceException ignored) {}
             carregarContas();
         } catch (NumberFormatException ex) {
-            erro("ID deve ser numérico");
+            erro("ID e ID Cliente devem ser numéricos");
         } catch (PersistenceException | IllegalArgumentException ex) {
             erro(ex.getMessage());
         }
@@ -193,12 +206,16 @@ public class JanelaConta extends JFrame {
             JTextField fSaldo     = new JTextField(String.valueOf(c.getSaldo()), 10);
             JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
             panel.add(new JLabel("ID Cliente:")); panel.add(fIdCliente);
-            panel.add(new JLabel("Saldo:"));     panel.add(fSaldo);
+            panel.add(new JLabel("Saldo:"));      panel.add(fSaldo);
             if (JOptionPane.showConfirmDialog(this, panel, "Editar Conta " + id, JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
+            int idCliente = Integer.parseInt(fIdCliente.getText().trim());
+            validarCliente(idCliente);
             c.setCampos(new String[]{fIdCliente.getText(), fSaldo.getText()});
             daoContas.atualizar(c);
             try { daoContas.persistir(); } catch (PersistenceException ignored) {}
             carregarContas();
+        } catch (NumberFormatException ex) {
+            erro("ID Cliente deve ser numérico");
         } catch (PersistenceException | IllegalArgumentException ex) {
             erro(ex.getMessage());
         }
@@ -215,6 +232,137 @@ public class JanelaConta extends JFrame {
             carregarContas();
         } catch (PersistenceException ex) {
             erro(ex.getMessage());
+        }
+    }
+
+    private void novaOrdem() {
+        int row = tabelaContas.getSelectedRow();
+        if (row < 0) { erro("Selecione uma conta na tabela à esquerda."); return; }
+        int contaId = (int) modeloContas.getValueAt(tabelaContas.convertRowIndexToModel(row), 0);
+
+        Conta conta;
+        try { conta = daoContas.carregar(contaId); }
+        catch (PersistenceException e) { erro(e.getMessage()); return; }
+
+        JTextField fIdAtivo     = new JTextField(6);
+        JComboBox<String> fTipo = new JComboBox<>(new String[]{"COMPRA", "VENDA"});
+        JTextField fQtd         = new JTextField(6);
+        JTextField fPreco       = new JTextField(10);
+
+        JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+        panel.add(new JLabel("ID Ativo:"));     panel.add(fIdAtivo);
+        panel.add(new JLabel("Tipo:"));         panel.add(fTipo);
+        panel.add(new JLabel("Quantidade:"));   panel.add(fQtd);
+        panel.add(new JLabel("Preço Limite:")); panel.add(fPreco);
+
+        if (JOptionPane.showConfirmDialog(this, panel, "Nova Ordem — Conta " + contaId,
+                JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
+
+        try {
+            int    idAtivo = Integer.parseInt(fIdAtivo.getText().trim());
+            String tipo    = (String) fTipo.getSelectedItem();
+            int    qtd     = Integer.parseInt(fQtd.getText().trim());
+            if (qtd <= 0) throw new IllegalArgumentException("Quantidade deve ser positiva");
+            double preco   = Double.parseDouble(fPreco.getText().trim().replace(",", "."));
+            if (preco < 0) throw new IllegalArgumentException("Preço não pode ser negativo");
+            double total   = qtd * preco;
+
+            try { daoAtivos.carregar(idAtivo); }
+            catch (PersistenceException e) { erro("Ativo " + idAtivo + " não encontrado."); return; }
+
+            if ("COMPRA".equals(tipo)) {
+                if (conta.getSaldo() < total) {
+                    erro(String.format("Saldo insuficiente. Saldo: %.2f  |  Total da ordem: %.2f", conta.getSaldo(), total));
+                    return;
+                }
+            } else {
+                int qtdEmCarteira = qtdNaCarteira(conta.getIdCliente(), idAtivo);
+                if (qtdEmCarteira < qtd) {
+                    erro(String.format("Carteira insuficiente. Possui %d unidade(s) do ativo %d.", qtdEmCarteira, idAtivo));
+                    return;
+                }
+            }
+
+            Ordem ordem = new Ordem(proximoId(daoOrdens));
+            ordem.setCampos(new String[]{
+                String.valueOf(contaId), String.valueOf(idAtivo), tipo, String.valueOf(qtd), String.valueOf(preco)
+            });
+            daoOrdens.salvar(ordem);
+
+            Historico hist = new Historico(proximoId(daoHistorico));
+            hist.setCampos(new String[]{String.valueOf(ordem.getId()), java.time.LocalDate.now().toString(), "EXECUTADO"});
+            daoHistorico.salvar(hist);
+
+            double novoSaldo = "COMPRA".equals(tipo) ? conta.getSaldo() - total : conta.getSaldo() + total;
+            conta.setCampos(new String[]{String.valueOf(conta.getIdCliente()), String.valueOf(novoSaldo)});
+            daoContas.atualizar(conta);
+
+            atualizarCarteira(conta.getIdCliente(), idAtivo, "COMPRA".equals(tipo) ? qtd : -qtd);
+
+            carregarContas();
+            atualizarAbas();
+            JOptionPane.showMessageDialog(this,
+                String.format("Ordem executada! Novo saldo: %.2f", novoSaldo),
+                "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (NumberFormatException ex) {
+            erro("Valores numéricos inválidos.");
+        } catch (IllegalArgumentException ex) {
+            erro(ex.getMessage());
+        } catch (PersistenceException ex) {
+            erro(ex.getMessage());
+        }
+    }
+
+    private void validarCliente(int idCliente) {
+        try {
+            Cliente cli = daoClientes.carregar(idCliente);
+            if (cli.getNome() == null || cli.getNome().isEmpty() || cli.getCpf() == null || cli.getCpf().isEmpty())
+                throw new IllegalArgumentException("Cliente " + idCliente + " não possui nome e CPF cadastrados.");
+        } catch (PersistenceException e) {
+            throw new IllegalArgumentException("Cliente com ID " + idCliente + " não encontrado.");
+        }
+    }
+
+    private int qtdNaCarteira(int idCliente, int idAtivo) {
+        try {
+            for (Carteira c : daoCarteira.carregarTodos())
+                if (c.getIdCliente() == idCliente && c.getIdAtivo() == idAtivo)
+                    return c.getQuantidade();
+        } catch (PersistenceException ignored) {}
+        return 0;
+    }
+
+    private void atualizarCarteira(int idCliente, int idAtivo, int delta) throws PersistenceException {
+        Carteira found = null;
+        try {
+            for (Carteira c : daoCarteira.carregarTodos())
+                if (c.getIdCliente() == idCliente && c.getIdAtivo() == idAtivo) { found = c; break; }
+        } catch (PersistenceException ignored) {}
+
+        if (found != null) {
+            int novaQtd = found.getQuantidade() + delta;
+            if (novaQtd <= 0) {
+                daoCarteira.apagar(found.getId());
+            } else {
+                found.setCampos(new String[]{String.valueOf(idCliente), String.valueOf(idAtivo), String.valueOf(novaQtd)});
+                daoCarteira.atualizar(found);
+            }
+        } else if (delta > 0) {
+            Carteira nova = new Carteira(proximoId(daoCarteira));
+            nova.setCampos(new String[]{String.valueOf(idCliente), String.valueOf(idAtivo), String.valueOf(delta)});
+            daoCarteira.salvar(nova);
+        }
+    }
+
+    private <E extends Entidade> int proximoId(EntidadeDAO<E> dao) {
+        try {
+            E[] todos = dao.carregarTodos();
+            int max = 0;
+            for (E e : todos) if (e.getId() > max) max = e.getId();
+            return max + 1;
+        } catch (PersistenceException e) {
+            return 1;
         }
     }
 
