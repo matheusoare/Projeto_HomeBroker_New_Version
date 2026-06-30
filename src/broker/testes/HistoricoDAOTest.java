@@ -69,8 +69,8 @@ class HistoricoDAOTest {
     }
 
     @Test
-    void carregarTodosVazio() throws PersistenceException {
-        assertEquals(0, dao.carregarTodos().length);
+    void carregarTodosVazio() {
+        assertThrows(PersistenceException.class, () -> dao.carregarTodos());
     }
 
     @Test
