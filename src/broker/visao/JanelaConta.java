@@ -75,14 +75,17 @@ public class JanelaConta extends JFrame {
         JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT));
         barra.add(new JLabel("ID:"));
         barra.add(campoId);
+        JButton buscar = new JButton("Buscar");
         JButton novo   = new JButton("Novo");
         JButton editar = new JButton("Editar");
         JButton apagar = new JButton("Apagar");
+        barra.add(buscar);
         barra.add(novo);
         barra.add(editar);
         barra.add(apagar);
         painel.add(barra, BorderLayout.SOUTH);
 
+        buscar.addActionListener(e -> buscarConta());
         novo.addActionListener(e -> novaConta());
         editar.addActionListener(e -> editarConta());
         apagar.addActionListener(e -> apagarConta());
@@ -138,6 +141,24 @@ public class JanelaConta extends JFrame {
                     modeloCarteira.addRow(new Object[]{c.getId(), c.getIdCliente(), c.getIdAtivo(), c.getQuantidade()});
             }
         } catch (PersistenceException ignored) {}
+    }
+
+    private void buscarConta() {
+        int id = lerId();
+        if (id < 0) return;
+        try {
+            Conta c = daoContas.carregar(id);
+            for (int i = 0; i < modeloContas.getRowCount(); i++) {
+                if ((int) modeloContas.getValueAt(tabelaContas.convertRowIndexToModel(i), 0) == id) {
+                    tabelaContas.setRowSelectionInterval(i, i);
+                    tabelaContas.scrollRectToVisible(tabelaContas.getCellRect(i, 0, true));
+                    break;
+                }
+            }
+            JOptionPane.showMessageDialog(this, c.toString(), "Conta encontrada", JOptionPane.INFORMATION_MESSAGE);
+        } catch (PersistenceException ex) {
+            erro(ex.getMessage());
+        }
     }
 
     private void novaConta() {
