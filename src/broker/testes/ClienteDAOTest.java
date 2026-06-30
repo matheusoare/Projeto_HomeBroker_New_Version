@@ -41,9 +41,17 @@ class ClienteDAOTest {
 
     @Test
     void atualizarComIdExistente() throws PersistenceException {
-        dao.salvar(new Cliente(1));
-        dao.atualizar(new Cliente(1));
-        assertNotNull(dao.carregar(1));
+        Cliente original = new Cliente(1);
+        original.setCampos(new String[]{"João", "111.111.111-11"});
+        dao.salvar(original);
+
+        Cliente atualizado = new Cliente(1);
+        atualizado.setCampos(new String[]{"Maria", "222.222.222-22"});
+        dao.atualizar(atualizado);
+
+        Cliente recuperado = dao.carregar(1);
+        assertEquals("Maria", recuperado.getNome());
+        assertEquals("222.222.222-22", recuperado.getCpf());
     }
 
     @Test
@@ -58,6 +66,11 @@ class ClienteDAOTest {
         Cliente removido = dao.apagar(1);
         assertEquals(c, removido);
         assertThrows(PersistenceException.class, () -> dao.carregar(1));
+    }
+
+    @Test
+    void carregarTodosVazio() {
+        assertThrows(PersistenceException.class, () -> dao.carregarTodos());
     }
 
     @Test

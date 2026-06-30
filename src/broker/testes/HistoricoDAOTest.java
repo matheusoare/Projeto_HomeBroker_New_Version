@@ -41,9 +41,17 @@ class HistoricoDAOTest {
 
     @Test
     void atualizarComIdExistente() throws PersistenceException {
-        dao.salvar(new Historico(1));
-        dao.atualizar(new Historico(1));
-        assertNotNull(dao.carregar(1));
+        Historico original = new Historico(1);
+        original.setCampos(new String[]{"1", "2024-01-01", "PENDENTE"});
+        dao.salvar(original);
+
+        Historico atualizado = new Historico(1);
+        atualizado.setCampos(new String[]{"1", "2024-01-02", "EXECUTADO"});
+        dao.atualizar(atualizado);
+
+        Historico recuperado = dao.carregar(1);
+        assertEquals("EXECUTADO", recuperado.getStatus());
+        assertEquals("2024-01-02", recuperado.getData());
     }
 
     @Test
@@ -58,6 +66,11 @@ class HistoricoDAOTest {
         Historico removido = dao.apagar(1);
         assertEquals(h, removido);
         assertThrows(PersistenceException.class, () -> dao.carregar(1));
+    }
+
+    @Test
+    void carregarTodosVazio() {
+        assertThrows(PersistenceException.class, () -> dao.carregarTodos());
     }
 
     @Test

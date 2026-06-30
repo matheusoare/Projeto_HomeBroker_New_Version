@@ -118,7 +118,6 @@ public class JanelaEntidade<E extends Entidade> extends JFrame {
             }
         } catch (PersistenceException ex) {
             modeloTabela.setRowCount(0);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Informação", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
