@@ -1,5 +1,7 @@
 package broker.visao;
 
+import broker.modelos.Cliente;
+import broker.modelos.Conta;
 import broker.modelos.Entidade;
 import broker.persistencia.DAOfactory;
 import broker.persistencia.EntidadeDAO;
@@ -190,6 +192,16 @@ public class JanelaEntidade<E extends Entidade> extends JFrame {
         if (confirm != JOptionPane.YES_OPTION) return;
         try {
             dao.apagar(id);
+            if (tipo == Cliente.class) {
+                EntidadeDAO<Conta> daoContas = DAOfactory.getInstancia().getDAO(Conta.class);
+                try {
+                    Conta[] contas = daoContas.carregarTodos();
+                    for (Conta c : contas)
+                        if (c.getIdCliente() == id)
+                            try { daoContas.apagar(c.getId()); } catch (PersistenceException ignored) {}
+                    try { daoContas.persistir(); } catch (PersistenceException ignored) {}
+                } catch (PersistenceException ignored) {}
+            }
             carregarTabela();
             JOptionPane.showMessageDialog(this, "Registro apagado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
         } catch (PersistenceException ex) {
