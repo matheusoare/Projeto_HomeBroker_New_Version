@@ -1,370 +1,78 @@
-# 🏦 Simulador de Home Broker
+Simulador de Home Broker
+Autores e Versão
 
-Sistema desktop para gerenciamento de operações em uma corretora de valores, que permite gerenciar investidores, ativos e ordens de compra/venda, desenvolvido em Java com interface gráfica Swing e persistência em arquivos.
+    Desenvolvimento: Matheus Soares Ferreira Ramos e Thales Henrique Marques Lázaro
 
-## 📋 Funcionalidades
+    Documentação e Revisão: Leonardo Naassom Rosa Oliveira
 
-- **Gerenciamento de Investidores**: Inserir, alterar, apagar e visualizar investidores por ID
-- **Contas** - Contas vinculadas aos clientes
-- **Gerenciamento de Ativos**: Cadastrar ações/fundos com ticker, nome e preço
-- **Gerenciamento de Ordens**: Criar ordens de compra e venda com múltiplos itens
-- **Carteira de Ativos**: Visualizar ativos que cada investidor possui
-- **Históricos** - Registro de operações realizadas
-- **Controle de Saldo**: Atualização automática de saldo ao comprar/vender
-- **Validações**: Verifica saldo insuficiente, investidores existem, etc.
-- **Persistência em arquivos** (serialização Java) para armazenar os dados, com tratamento robusto de exceções e uma arquitetura baseada em DAO (Data Access Object).
+    Versão: 2.0
 
-## 🛠️ Pré-requisitos
+O trabalho conjunto dos autores resultou nesta aplicação desktop modular. O núcleo de desenvolvimento estabeleceu uma base sólida de engenharia de software, enquanto a revisão e a documentação técnica estruturaram o projeto para que ele funcione como um ecossistema integrado e de fácil compreensão, ligando as regras de negócio de investimentos diretamente à persistência local.
+Descrição do Projeto e Funcionalidades
 
-- **Java 8+** instalado no sistema
-- **Git** (opcional, para clonar o repositório)
+O Simulador de Home Broker é um sistema desktop para gerenciamento de operações em uma corretora de valores. Ele permite administrar investidores, contas, ativos e ordens de compra/venda de forma centralizada. A aplicação utiliza uma interface gráfica Swing e adota o padrão arquitetural DAO (Data Access Object) com Generics e Singleton, o que garante a separação clara de responsabilidades e facilita a manutenção do código.
 
-### Verificar se Java está instalado:
+As funcionalidades principais do sistema englobam:
 
-```bash
-java -version
-```
-
-Se não tiver Java instalado, baixe em: https://www.java.com/pt_BR/download/
-
-
-## 🚀 Como Executar
-
-### Passo a passo
-
-### Opção 1: Compilar e Executar Manualmente
- ## 1. **Clone o repositório**
-   ```bash
-   git clone https://github.com/matheusoare/Projeto_HomeBroker_New_Version.git
-   cd Projeto_HomeBroker_New_Version
-   ```
-
- ## 2. **Compile o código**
- 
- # No Linux / Mac / GitBash
-   ```bash
-   javac -d out $(find . -name "*.java")
-   ```
-
- # No Windows
-   ```bash
-   javac -encoding UTF-8 -d bin src/broker/*.java src/broker/modelos/*.java src/broker/visao/*.java
-   ```
-
- ## 3. **Execute o programa**
-   ```bash
-   java -cp out broker.visao.Main
-   ```
-
-   ---
-### Opção 2: Script Automático (Linux)
-
- Crie um arquivo chamado `executar.sh` na raiz do projeto:
-
- ```bash 
- #!/bin/bash
-
- echo "🔧 Compilando o Home Broker System..."
- javac -encoding UTF-8 -d bin src/broker/*.java src/broker/modelos/*.java src/broker/visao/*.java
-
- if [ $? -ne 0 ]; then
-     echo "❌ Erro na compilação! Verifique os arquivos."
-     exit 1
- fi
-
- echo "✅ Compilação concluída com sucesso!" 
- echo ""
- echo "🚀 Executando o programa..."
- java -cp bin broker.visao.Main
- ```
- Depois execute:
-
- ```bash
- chmod +x executar.sh
- ./executar.sh
- ```
-
-### Opção 3: Script Automático (Windows)
-
- Crie um arquivo executar.ps1 na raiz do projeto
-
- ```bash
- Write-Host "🔧 Compilando o Home Broker System..." -ForegroundColor Yellow
- javac -encoding UTF-8 -d bin src/broker/*.java src/broker/modelos/*.java src/broker/visao/*.java
-
- if ($LASTEXITCODE -ne 0) {
-     Write-Host "❌ Erro na compilação! Verifique os arquivos." -ForegroundColor Red
-     exit 1
- }
-
- Write-Host "✅ Compilação concluída com sucesso!" -ForegroundColor Green
- Write-Host ""
- Write-Host "🚀 Executando o programa..." -ForegroundColor Yellow
- java -cp bin broker.visao.Main
- ```
-
- Execute com:
-
- ```bash
- .\executar.ps1
- ```
-
- ---
-
-## 📁 Estrutura do Projeto
-```
-Projeto_HomeBroker_New_Version/
-├── src/
-│   └── broker/
-│       ├── modelos/              # Entidades do sistema
-│       │   ├── Entidade.java     # Classe abstrata base (com Serializable)
-│       │   ├── Cliente.java
-│       │   ├── Conta.java
-│       │   ├── Ativo.java
-│       │   ├── Ordem.java
-│       │   ├── Carteira.java
-│       │   └── Historico.java
-│       │
-│       ├── persistencia/         # Camada de persistência
-│       │   ├── EntidadeDAO.java  # DAO genérico com CRUD
-│       │   ├── DAOfactory.java   # Fábrica de DAOs (Singleton)
-│       │   └── PersistenceException.java # Exceção personalizada
-│       │
-│       ├── visao/                # Interface gráfica
-│       │   ├── Main.java         # Ponto de entrada
-│       │   ├── JanelaPrincipal.java # Menu principal
-│       │   └── JanelaEntidade.java   # CRUD genérico para cada entidade
-│       │
-│       └── testes/               # Testes unitários (JUnit)
-│           ├── ClienteDAOTest.java
-│           ├── ContaDAOTest.java
-│           ├── AtivoDAOTest.java
-│           ├── OrdemDAOTest.java
-│           ├── CarteiraDAOTest.java
-│           └── HistoricoDAOTest.java
-├── lib/                          # JUnit 5 - bibliotecas para testes unitário
-│   ├── junit-jupiter-api_5.14.3.jar  
-│   ├── junit-jupiter-engine_5.14.3.jar
-│   ├── junit-platform-commons_1.14.3.jar
-│   ├── junit-platform-engine_1.14.3.jar
-│   ├── junit-platform-launcher_1.14.3.jar
-│   ├── org.apiguardian.api_1.1.2.jar
-│   └── org.opentest4j_1.3.0.jar
-├── bin/                               (Gerado após compilação)
-│   └── broker/
-│       ├── *.class
-│       ├── modelos/
-│       │   └── *.class
-│       └── visao/
-│           └── *.class
-├── data/                              (Gerado automaticamente)
-│   ├── clientes.dat
-│   ├── historicos.dat
-│   ├── contas.dat
-│   ├── ativos.dat
-│   ├── carteiras.dat
-│   └── ordens.dat
-├── executar.ps1                       (Script Windows)
-├── executar.sh                        (Script Linux/Mac)
-└── README.md
-```
-
-## 🖥️ Como Usar o Programa
-
-### Tela Principal
-Ao executar o programa, uma janela com botões para cada entidade será exibida:
-
-- **Clientes** – Cadastro de investidores
-- **Contas** – Contas vinculadas aos clientes
-- **Ativos** – Ações e fundos disponíveis
-- **Ordens** – Ordens de compra e venda
-- **Carteiras** – Ativos que cada cliente possui
-- **Históricos** – Registro de operações realizadas
-
-### Operações Básicas (CRUD)
-Cada janela de entidade permite as seguintes operações:
-
-| Botão | Funcionalidade |
-|-------|----------------|
-| **Novo** | Abre um formulário para cadastrar um novo registro |
-| **Buscar** | Localiza um registro pelo ID e exibe seus detalhes |
-| **Editar** | Altera os dados de um registro existente |
-| **Apagar** | Remove um registro pelo ID |
-| **Atualizar** | Recarrega a tabela com os dados mais recentes |
-
-### Exemplo: Cadastrar um Cliente
-
-1. Na tela principal, clique em **"Clientes"**
-2. Clique em **"Novo"**
-3. Preencha os campos:
-   - **ID**: `1`
-   - **Nome**: `João Silva`
-   - **CPF**: `123.456.789-00`
-4. Clique em **"OK"** para salvar
-5. O registro aparecerá na tabela
-
-### Exemplo: Criar uma Ordem de Compra
-
-1. Na tela principal, clique em **"Ordens"**
-2. Clique em **"Novo"**
-3. Preencha os campos:
-   - **ID**: `1`
-   - **ID Conta**: `1`
-   - **ID Ativo**: `1`
-   - **Tipo**: `COMPRA`
-   - **Quantidade**: `100`
-   - **Preço Limite**: `25.50`
-4. Clique em **"OK"** para salvar
-
-### Exemplo: Visualizar um Cliente
-
-1. Na tela principal, clique em "Clientes"
-2. Digite no campo de busca:
-   - **ID**: `1`
-3. Clique em "Buscar"
-4. Uma janela com os dados do cliente será exibida
-
-### Persistência Automática
-Os dados são salvos automaticamente em arquivos `.dat` na pasta `data/` sempre que você:
-- Cadastra um novo registro
-- Edita um registro existente
-- Apaga um registro
-
-Observações:
-- Se você fechar o programa incorretamente, os últimos dados podem não ser salvos
-
-### ⚠️ Validações
-
-O sistema realiza verificações para evitar erros:
-
-- **ID duplicado** – Não é permitido salvar dois registros com o mesmo ID
-- **Campos obrigatórios** – Todos os campos devem ser preenchidos
-- **Tipos numéricos** – Campos como ID, quantidade e preço exigem valores numéricos
-- **Entidade não encontrada** – Ao buscar, editar ou apagar um ID inexistente, uma mensagem de erro é exibida
-
-Em caso de erro, uma mensagem explicativa será exibida na tela.
-
-
-## 💾 Persistência de Dados
-
-### Como os dados são salvos
-
-Os dados são salvos automaticamente em **arquivos binários** na pasta `data/` utilizando **Serialização Java** (`ObjectOutputStream`).
-
-**Exemplo de arquivo gerado:** `data/clientes.dat`
-
-### Arquivos gerados:
-
-| Arquivo | Entidade |
-|---------|----------|
-| `clientes.dat` | Cliente |
-| `contas.dat` | Conta |
-| `ativos.dat` | Ativo |
-| `ordens.dat` | Ordem |
-| `carteiras.dat` | Carteira |
-| `historicos.dat` | Historico |
-
-### Estrutura dos dados
-
-Cada arquivo armazena objetos Java das respectivas classes. Exemplo da classe `Cliente`:
-
-```java
-private int id;       // Identificador único
-private String nome;  // Nome do investidor
-private String cpf;   // CPF do investidor
-```
-
-## ⚠️ Tratamento de Exceções
-
-O sistema possui uma camada robusta de tratamento de exceções através da classe `PersistenceException`:
-
-**Operações CRUD** (salvar, atualizar, apagar, carregar)
-- Validações:
-  1. ID duplicado ao salvar
-  2. Entidade não encontrada ao atualizar/apagar
-  3. Campos inválidos ou nulos
-  4. Erros de I/O ao ler/escrever arquivos
-
-**Exemplo de exceção lançada:**
-
-- Erro na operação Salvar: Entidade com este ID já existe. Valor: Cliente{id=1, nome=João, cpf=123}
-
-## 🧪 Testes
-
-- O projeto inclui testes unitários para cada DAO utilizando JUnit 5.
-- Para executar os testes:
-```bash
-
-# Se estiver usando Maven
-mvn test
-
-# Se estiver usando Gradle
-gradle test
-```
-# Ou execute diretamente na IDE (clique com o botão direito na pasta testes -> Run)
-
- - Cobertura de testes:
-   1. ✅ Salvar com ID novo
-   2. ✅ Salvar com ID existente (lança exceção)
-   3. ✅ Atualizar com ID existente
-   4. ✅ Atualizar com ID inexistente (lança exceção)
-   5. ✅ Apagar com ID existente
-   6. ✅ Apagar com ID inexistente (lança exceção)
-   7. ✅ Carregar com ID existente
-   8. ✅ Carregar com ID inexistente (lança exceção)
-
-## 🔧 Troubleshooting (Solução de Problemas)
-
-| Problema | Solução |
-|----------|---------|
-| `javac: command not found` | Instale o Java JDK e configure o PATH |
-| `cannot find symbol` | Compile a partir da raiz do projeto com o caminho correto |
-| `Could not find or load main class` | Execute `java -cp bin broker.visao.Main` na raiz |
-| Dados não aparecem | Verifique se a pasta `data/` existe e se você salvou os registros |
-| Pasta `data/` não criada | Execute o programa uma vez ou crie manualmente: `mkdir data` |
-| Script `.sh` não executa no Linux | Dê permissão: `chmod +x executar.sh` | 
-
-## 📚 Documentação do Código
-
-O código está documentado com **Javadoc** para facilitar o entendimento das classes e métodos. Para gerar a documentação:
-
-```bash
-javadoc -encoding UTF-8 -d javadoc src/broker/*.java src/broker/modelos/*.java src/broker/persistencia/*.java src/broker/visao/*.java
-```
-Depois abra o arquivo `javadoc/index.html` no navegador.
----
-
-## 👨‍💻 Autores
-
-Leonardo Naassom Rosa Oliveira - Documentação e Revisão
-Matheus Soares Ferreira Ramos - Desenvolvimento
-Thales Henrique Marques Lázaro - Desenvolvimento
-
-## 📝 Versão
-
-1.0
-
----
-
-## 📌 Notas Importantes
-
-- ✅ Interface gráfica com Swing para facilitar o uso
-- ✅ Persistência automática em arquivos .dat via serialização
-- ✅ CRUD completo para todas as entidades (Clientes, Contas, Ativos, Ordens, Carteiras, Históricos)
-- ✅ Tratamento robusto de exceções com PersistenceException
-- ✅ Validações de ID duplicado, campos obrigatórios e tipos numéricos
-- ✅ Arquitetura baseada em DAO com Generics e Singleton
-- ✅ Testes unitários com JUnit 5
-
----
-
-## 🚀 Próximas Melhorias (sugestões)
-
-- [ ] Adicionar validação de CPF e outros campos específicos
-- [ ] Implementar autenticação por senha para usuários
-- [ ] Substituir serialização por banco de dados (SQLite/MySQL)
-- [ ] Adicionar relatórios em PDF das movimentações
-- [ ] Gráficos de desempenho de ativos
-- [ ] Funcionalidade de busca por nome (não apenas por ID)
-- [ ] Exportar dados para CSV/Excel
-- [ ] Versão web da aplicação
+    Gerenciamento de Investidores e Contas: Inserção, alteração, exclusão e visualização de investidores por ID, associando cada cliente à sua respectiva conta.
+
+    Gerenciamento de Ativos: Cadastro e controle de ações e fundos contendo ticker, nome e preço.
+
+    Gerenciamento de Ordens e Carteira: Criação de ordens de compra e venda com múltiplos itens, atualizando automaticamente o saldo financeiro e refletindo o estado atualizado na carteira de ativos do investidor.
+
+    Histórico e Auditoria: Registro contínuo e automático de todas as operações realizadas para fins de consulta e rastreabilidade.
+
+    Validações e Segurança: Mecanismo robusto que impede IDs duplicados, valida campos obrigatórios, bloqueia ordens se houver saldo insuficiente e trata falhas via exceções personalizadas com a classe PersistenceException.
+
+Tecnologias e Requisitos
+
+Para dar suporte a todas as funcionalidades descritas, o ambiente de desenvolvimento e execução necessita de:
+
+    Java 8+ instalado no sistema (verifique utilizando o comando java -version).
+
+    Java Swing para a renderização da interface gráfica.
+
+    JUnit 5 para a execução dos testes unitários que validam a integridade das operações CRUD na camada de persistência.
+
+Como Executar
+
+Considerando que você já possui o diretório do projeto localmente, a compilação e a inicialização podem ser feitas diretamente através dos scripts automatizados incluídos na raiz ou de forma manual.
+Opção 1: Via Scripts de Automação
+
+    No Linux / Mac:
+    Bash
+
+    chmod +x executar.sh
+    ./executar.sh
+
+    No Windows (PowerShell):
+    Bash
+
+    .\executar.ps1
+
+Opção 2: Compilação e Execução Manual
+
+Caso prefira processar os arquivos diretamente no terminal, execute os comandos abaixo a partir do diretório raiz do projeto:
+Bash
+
+# Compilar o código fonte direcionando os binários para a pasta bin
+javac -encoding UTF-8 -d bin src/broker/*.java src/broker/modelos/*.java src/broker/visao/*.java
+
+# Executar a aplicação a partir do ponto de entrada principal
+java -cp bin broker.visao.Main
+
+Estrutura e Persistência de Dados
+
+As funcionalidades manipuladas pelo usuário na interface Swing interagem diretamente com a arquitetura interna criada pelos desenvolvedores. Os dados do Home Broker são preservados localmente através da Serialização Java (ObjectOutputStream), salvando o estado do sistema de maneira automatizada sempre que um registro é criado, editado ou removido.
+
+A estrutura de diretórios reflete essa organização:
+
+    data/: Diretório gerado automaticamente para armazenar os arquivos binários de persistência (clientes.dat, contas.dat, ativos.dat, ordens.dat, carteiras.dat, historicos.dat).
+
+    src/broker/modelos/: Contém as entidades abstratas e concretas do sistema que servem de modelo para os dados (Cliente, Conta, Ativo, Ordem, Carteira, Historico).
+
+    src/broker/persistencia/: Concentra a lógica do DAO genérico, da fábrica Singleton e das validações de I/O que evitam a corrupção dos arquivos binários.
+
+    src/broker/visao/: Contém as janelas de interface gráfica (JanelaPrincipal, JanelaEntidade) e a classe Main que inicia o programa.
+
+    src/testes/: Armazena os testes unitários estruturados em JUnit 5 para garantir o comportamento previsível de cada método de salvamento e leitura.
