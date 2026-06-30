@@ -51,7 +51,7 @@ class ClienteDAOTest {
 
         Cliente recuperado = dao.carregar(1);
         assertEquals("Maria", recuperado.getNome());
-        assertEquals("222.222.222-22", recuperado.getCpf());
+        assertEquals("22222222222", recuperado.getCpf());
     }
 
     @Test
