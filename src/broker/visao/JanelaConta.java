@@ -77,17 +77,24 @@ public class JanelaConta extends JFrame {
         painel.setBorder(BorderFactory.createTitledBorder("Contas"));
         painel.add(new JScrollPane(tabelaContas), BorderLayout.CENTER);
 
-        JPanel barra = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        barra.add(new JLabel("ID:"));
-        barra.add(campoId);
         JButton buscar = new JButton("Buscar");
         JButton novo   = new JButton("Novo");
         JButton editar = new JButton("Editar");
         JButton apagar = new JButton("Apagar");
-        barra.add(buscar);
-        barra.add(novo);
-        barra.add(editar);
-        barra.add(apagar);
+
+        JPanel linhaBusca = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        linhaBusca.add(new JLabel("ID:"));
+        linhaBusca.add(campoId);
+        linhaBusca.add(buscar);
+
+        JPanel linhaAcoes = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        linhaAcoes.add(novo);
+        linhaAcoes.add(editar);
+        linhaAcoes.add(apagar);
+
+        JPanel barra = new JPanel(new BorderLayout());
+        barra.add(linhaBusca, BorderLayout.NORTH);
+        barra.add(linhaAcoes, BorderLayout.SOUTH);
         painel.add(barra, BorderLayout.SOUTH);
 
         buscar.addActionListener(e -> buscarConta());
