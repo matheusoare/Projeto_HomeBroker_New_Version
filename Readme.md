@@ -36,21 +36,7 @@ Para dar suporte a todas as funcionalidades descritas, o ambiente de desenvolvim
 
 Como Executar
 
-Considerando que você já possui o diretório do projeto localmente, a compilação e a inicialização podem ser feitas diretamente através dos scripts automatizados incluídos na raiz ou de forma manual.
-Opção 1: Via Scripts de Automação
-
-    No Linux / Mac:
-    Bash
-
-    chmod +x executar.sh
-    ./executar.sh
-
-    No Windows (PowerShell):
-    Bash
-
-    .\executar.ps1
-
-Opção 2: Compilação e Execução Manual
+Compilação e Execução Manual
 
 Caso prefira processar os arquivos diretamente no terminal, execute os comandos abaixo a partir do diretório raiz do projeto:
 

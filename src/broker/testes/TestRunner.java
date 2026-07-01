@@ -4,7 +4,6 @@ import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.*;
 import org.junit.platform.launcher.listeners.*;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
-import org.junit.platform.engine.DiscoverySelector;
 
 public class TestRunner {
     public static void main(String[] args) {
