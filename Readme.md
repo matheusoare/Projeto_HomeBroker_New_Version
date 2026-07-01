@@ -53,13 +53,34 @@ Opção 1: Via Scripts de Automação
 Opção 2: Compilação e Execução Manual
 
 Caso prefira processar os arquivos diretamente no terminal, execute os comandos abaixo a partir do diretório raiz do projeto:
-Bash
 
-# Compilar o código fonte direcionando os binários para a pasta bin
-javac -encoding UTF-8 -d bin src/broker/*.java src/broker/modelos/*.java src/broker/visao/*.java
+No Windows:
 
-# Executar a aplicação a partir do ponto de entrada principal
-java -cp bin broker.visao.Main
+```terminal
+New-Item -ItemType Directory -Force -Path bin | Out-Null
+javac -encoding UTF-8 -cp "lib/*" -d bin $(Get-ChildItem -Recurse -Filter *.java -Path src | ForEach-Object { $_.FullName })
+java -cp "bin;lib/*" broker.visao.Main
+```
+
+No Linux:
+
+```terminal
+mkdir -p bin
+javac -encoding UTF-8 -cp "lib/*" -d bin $(find src -name "*.java")
+java -cp "bin:lib/*" broker.visao.Main
+```
+
+Para rodar os testes:
+
+```terminal
+java -cp "bin;lib/*" broker.testes.TestRunner
+```
+
+No Linux:
+
+```terminal
+java -cp "bin:lib/*" broker.testes.TestRunner
+```
 
 Estrutura e Persistência de Dados
 
@@ -75,4 +96,4 @@ A estrutura de diretórios reflete essa organização:
 
     src/broker/visao/: Contém as janelas de interface gráfica (JanelaPrincipal, JanelaEntidade) e a classe Main que inicia o programa.
 
-    src/testes/: Armazena os testes unitários estruturados em JUnit 5 para garantir o comportamento previsível de cada método de salvamento e leitura.
+    src/broker/testes/: Armazena os testes unitários estruturados em JUnit 5 para garantir o comportamento previsível de cada método de salvamento e leitura.
